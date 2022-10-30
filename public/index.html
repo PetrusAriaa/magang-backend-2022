@@ -1,0 +1,61 @@
+<html>
+
+<head>
+  <title>Express</title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.2/leaflet.css" integrity="sha512-UkezATkM8unVC0R/Z9Kmq4gorjNoFwLMAWR/1yZpINW08I79jEKx/c8NlLSvvimcu7SL8pgeOnynxfRpe+5QpA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw-src.css" integrity="sha512-vJfMKRRm4c4UupyPwGUZI8U651mSzbmmPgR3sdE3LcwBPsdGeARvUM5EcSTg34DK8YIRiIo+oJwNfZPMKEQyug==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<!--Leaflet library sama leaflet.draw CSS/JS-->
+<!--Init leaflet buat draw-->
+
+<body>
+  <h1>List Misi</h1>
+  <div id="map" style="width: 100vw; height: 100%"></div>
+  <ul id="mission-list">
+    <!-- Mission List -->
+    
+  </ul>
+
+  <button type="button" onclick="downloadGeoJSON"> Download GeoJson</button>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.2/leaflet.js" integrity="sha512-KMraOVM0qMVE0U1OULTpYO4gg5MZgazwPAPyMQWfOkEshpwlLQFCHZ/0lBXyviDNVL+pBGwmeXQnuvGK8Fscvg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js" integrity="sha512-ozq8xQKq6urvuU6jNgkfqAmT7jKN2XumbrX1JiB3TnF7tI48DPI4Gy1GXKD/V3EExgAs1V+pRO7vwtS1LHg0Gw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.js" integrity="sha512-CX7sDOp7UTAq+i1FYIlf9Uo27x4os+kGeoT7rgwvY+4dmjqV0IuE/Bl5hVsjnQPQiTOhAX1O2r2j5bjsFBvv/A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  
+  <script>
+    fetch('/api/geojson')
+      .then(data => {
+            data.json().then(resp => {
+                resp.forEach((element, i) => {
+                    console.log(element)
+                  $('#mission-list').append(`<li>${i}, <a href="/api/geojson/delete/${i}">Hapus</a></li>`)
+                });
+            })
+        })
+
+    var map = L.map('map', {drawControl: true}).setView([-7.770905, 110.337673], 100);
+    
+    
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+        
+    //FeatureGroup buat layer
+    var drawnItems = new L.FeatureGroup()
+
+    map.on("draw:created", e => {
+      drawnItems.addLayer(e.layer)
+    })
+
+    drawnItems.addTo(map);
+
+
+    // function downloadGeoJSON()
+
+  </script>
+  </body>
+
+</html>
